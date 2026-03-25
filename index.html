@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mayito Gonzalez</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#05070f;color:#fff;overflow-x:hidden}
+
+/* LOADER */
+.loader{
+ position:fixed;
+ inset:0;
+ background:#05070f;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ z-index:9999;
+}
+.loader::after{
+ content:"";
+ width:60px;
+ height:60px;
+ border-radius:50%;
+ border:3px solid rgba(255,255,255,.1);
+ border-top-color:#00aaff;
+ animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+canvas{position:fixed;top:0;left:0;z-index:-1}
+
+nav{position:fixed;top:0;width:100%;padding:25px 80px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.4);backdrop-filter:blur(20px);z-index:1000}
+.logo{font-size:24px;font-weight:800;letter-spacing:2px}
+.logo span{color:#00aaff}
+.nav-socials a{margin-left:20px;font-size:22px;color:white}
+
+.login{
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ height:100vh;
+ animation:fadeIn 1.2s ease;
+}
+@keyframes fadeIn{from{opacity:0;transform:scale(1.05)}to{opacity:1;transform:scale(1)}}
+.login-box{
+ backdrop-filter:blur(30px);
+ background:rgba(255,255,255,.05);
+ padding:70px;
+ border-radius:30px;
+ box-shadow:0 0 80px rgba(0,0,0,.7);
+ text-align:center;
+ transform:translateY(40px);
+ opacity:0;
+ animation:slideUp 1s ease forwards;
+}
+@keyframes slideUp{to{transform:translateY(0);opacity:1}}
+.input{margin-top:20px;padding:15px;width:260px;border:none;border-radius:20px;background:rgba(255,255,255,.08);color:#fff}
+.btn{
+ margin-top:20px;
+ padding:14px 40px;
+ border:none;
+ border-radius:20px;
+ background:#fff;
+ color:#000;
+ font-weight:600;
+ cursor:pointer;
+ transition:.3s;
+}
+.btn:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(255,255,255,.3)}
+
+.main{display:none;opacity:0;transition:1s}
+.section{padding:160px 20px;text-align:center;max-width:1200px;margin:auto}
+.hero-img{width:170px;border-radius:50%;margin-bottom:30px;box-shadow:0 0 60px rgba(0,170,255,.7)}
+.title{font-size:60px;font-weight:800;margin-bottom:20px}
+.subtitle{max-width:850px;margin:auto;color:#aaa;line-height:1.8}
+
+/* MARCAS */
+.brands-wrapper{display:flex;justify-content:center;margin-top:60px}
+.brands{width:60%;overflow:hidden;mask-image:linear-gradient(to right, transparent, white 20%, white 80%, transparent)}
+.track{display:flex;gap:80px;animation:scroll 20s linear infinite}
+.track img{width:60px;opacity:.8}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* NEWS */
+.news{margin-top:80px}
+.news-item{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:40px;
+ align-items:center;
+ margin-bottom:80px;
+ padding:30px;
+ border-radius:25px;
+ background:rgba(255,255,255,0.04);
+ backdrop-filter:blur(15px);
+ box-shadow:0 0 30px rgba(0,0,0,0.4);
+}
+.news img{
+ width:100%;
+ max-height:260px;
+ object-fit:cover;
+ border-radius:15px;
+}
+.news p{
+ color:#aaa;
+ line-height:1.8;
+ text-align:left;
+}
+.news-item{margin-bottom:100px}
+.news img{width:100%;border-radius:20px;margin-top:20px}
+.news p{color:#aaa;line-height:1.8;margin-top:20px}
+
+/* SPOTIFY */
+.spotify-btn{position:fixed;bottom:20px;right:20px;width:55px;height:55px;border-radius:50%;background:#1db954;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.spotify-panel{position:fixed;bottom:-100%;right:20px;width:320px;background:#0b0e1a;border-radius:20px;padding:15px;transition:.4s}
+.spotify-panel.active{bottom:90px}
+
+footer{text-align:center;padding:40px;color:#777}
+</style>
+</head>
+<body>
+
+<div class="loader" id="loader"></div>
+<canvas id="fluid"></canvas>
+
+<nav>
+ <div class="logo">MAYITO <span>GONZALEZ</span></div>
+ <div class="nav-socials">
+  <a href="https://www.instagram.com/gonzxlez.z" target="_blank"><i class="fab fa-instagram"></i></a>
+  <a href="https://discord.com/users/1175642221425463319" target="_blank"><i class="fab fa-discord"></i></a>
+ </div>
+</nav>
+
+<!-- LOGIN -->
+<div class="login" id="login">
+ <div class="login-box">
+  <h2>Bienvenido</h2>
+  <input id="name" class="input" placeholder="Ingresa tu nombre">
+  <button class="btn" id="btnLogin">Entrar</button>
+ </div>
+</div>
+
+<div class="main" id="main">
+
+<section class="section">
+ <img class="hero-img" src="https://media.discordapp.net/attachments/1175643017391120426/1486232830760587354/logo_alan.png?ex=69c4c1af&is=69c3702f&hm=dd1fd4fe5bdc58c0360777724b7886bdfc2bdf77d1a2a2577da667d409f016c1&=&format=webp&quality=lossless">
+ 
+ <h1 class="title">Mayito Gonzalez</h1>
+ <p class="subtitle">
+ Soy Alan González, estudiante de ciberseguridad con enfoque en la protección digital de menores y entornos familiares.
+ Actualmente me encuentro desarrollando conocimientos en análisis de riesgos, prevención de amenazas y buenas prácticas dentro del entorno digital.
+ <br><br>
+ Mi objetivo es contribuir a un uso más seguro y consciente de la tecnología, entendiendo los riesgos actuales y cómo prevenirlos de forma práctica.
+ </p>
+</section>
+
+<section class="section">
+ <h2 class="title">Tecnologías</h2>
+ <div class="brands-wrapper">
+  <div class="brands">
+   <div class="track">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg">
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/facebook/facebook-original.svg">
+   </div>
+  </div>
+ </div>
+</section>
+
+<section class="section news">
+ <h2 class="title">Noticias & Conciencia Digital</h2>
+
+ <div class="news-item">
+  <p>
+ La seguridad digital en entornos familiares se ha convertido en una prioridad crítica. Padres, tutores y adultos mayores enfrentan un ecosistema digital complejo donde los riesgos no siempre son visibles. La exposición a fraudes, robo de identidad y manipulación social ha aumentado considerablemente en los últimos años, especialmente en usuarios con menor experiencia tecnológica.
+ <br><br>
+ La educación digital preventiva permite identificar señales de riesgo, establecer controles parentales y fomentar hábitos responsables en el uso de dispositivos conectados.
+  </p>
+  <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300">
+ </div>
+
+ <div class="news-item">
+  <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b">
+  <p>
+ El ciberbullying continúa en aumento a nivel global, afectando a millones de menores. Diversos estudios internacionales señalan que más del 60% de los niños han experimentado algún tipo de acoso digital.
+ <br><br>
+ En México, la cifra es aún más alarmante: siete de cada diez menores han sido víctimas. Este fenómeno no solo impacta emocionalmente, sino que puede derivar en consecuencias psicológicas severas.
+  </p>
+ </div>
+
+ <div class="news-item">
+  <p>
+ Los videojuegos en línea representan un entorno de interacción constante, pero también un punto de riesgo para menores. Chats abiertos, contacto con desconocidos y sistemas de recompensa pueden ser utilizados para manipulación o grooming.
+ <br><br>
+ Es fundamental que los padres comprendan las dinámicas de estas plataformas y establezcan límites, supervisión activa y comunicación constante con los menores.
+  </p>
+  <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e">
+ </div>
+
+ <div class="news-item">
+  <img src="https://images.unsplash.com/photo-1584697964403-4e6c6c9c0c28">
+  <p>
+ El incremento de ataques de phishing y fraudes digitales ha impactado especialmente a adultos mayores. Correos falsos, llamadas engañosas y sitios web clonados son utilizados para obtener información sensible.
+ <br><br>
+ La capacitación en reconocimiento de amenazas digitales es clave para reducir estos riesgos y fortalecer la confianza en el uso de tecnologías.
+  </p>
+ </div>
+
+ <div class="news-item">
+  <p>
+ Las redes sociales, aunque esenciales para la comunicación moderna, también representan un riesgo significativo. La sobreexposición de información personal puede facilitar delitos como el doxing, acoso o suplantación de identidad.
+ <br><br>
+ Fomentar una cultura de privacidad digital es esencial para proteger la integridad de los usuarios en todos los niveles.
+  </p>
+  <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432">
+ </div>
+
+ <div class="news-item">
+  <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df">
+  <p>
+ La transformación digital ha traído consigo beneficios, pero también desafíos en materia de seguridad. Desde dispositivos inteligentes hasta plataformas educativas, cada punto de conexión representa una posible vulnerabilidad.
+ <br><br>
+ La implementación de buenas prácticas como contraseñas seguras, autenticación en dos factores y actualización constante de sistemas es fundamental para mitigar riesgos.
+  </p>
+ </div>
+
+</section>
+
+
+<!-- RECOMENDACIONES -->
+<section class="section">
+ <h2 class="title">Buenas prácticas digitales</h2>
+ <p class="subtitle">Pequeñas acciones que pueden marcar una gran diferencia en tu seguridad dentro del entorno digital.</p>
+
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin-top:50px">
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>🔐 Contraseñas seguras</h3>
+   <p>Utiliza contraseñas únicas y evita repetirlas en múltiples plataformas.</p>
+  </div>
+
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>📱 Verificación en dos pasos</h3>
+   <p>Activa la autenticación en dos factores para proteger tus cuentas.</p>
+  </div>
+
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>🚫 Información personal</h3>
+   <p>Evita compartir datos sensibles en redes sociales o plataformas públicas.</p>
+  </div>
+
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>🔗 Enlaces sospechosos</h3>
+   <p>No accedas a enlaces desconocidos, incluso si parecen confiables.</p>
+  </div>
+
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>🎮 Videojuegos</h3>
+   <p>Supervisa las interacciones en línea y limita el contacto con desconocidos.</p>
+  </div>
+
+  <div style="padding:25px;border-radius:20px;background:rgba(255,255,255,0.05);backdrop-filter:blur(15px)">
+   <h3>👨‍👩‍👧‍👦 Entorno familiar</h3>
+   <p>La comunicación en casa es clave para prevenir riesgos digitales.</p>
+  </div>
+ </div>
+</section>
+
+<footer>© 2023 - 2026 Mayito Gonzxlez | Todos los derechos reservados</footer>
+
+</div>
+
+<div class="spotify-btn" onclick="toggleSpotify()"><i class="fab fa-spotify"></i></div>
+<div class="spotify-panel" id="spotifyPanel">
+ <iframe src="https://open.spotify.com/embed/track/0xBrfkVHhf5v7CLomAemCC" width="100%" height="80" frameborder="0" allow="autoplay"></iframe>
+</div>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script>
+window.onload=()=>{
+ setTimeout(()=>{document.getElementById('loader').style.display='none'},1000);
+}
+
+btnLogin.onclick=()=>{
+ const name=document.getElementById('name').value.trim();
+ if(!name)return alert('Ingresa tu nombre');
+ login.style.display='none';
+ main.style.display='block';
+ setTimeout(()=>{main.style.opacity='1'},50);
+}
+
+function toggleSpotify(){
+ document.getElementById('spotifyPanel').classList.toggle('active');
+}
+
+const canvas=document.getElementById('fluid');
+const ctx=canvas.getContext('2d');
+canvas.width=innerWidth;canvas.height=innerHeight;
+let p=[];
+for(let i=0;i<80;i++)p.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:Math.random()*2-1,vy:Math.random()*2-1});
+function a(){ctx.clearRect(0,0,canvas.width,canvas.height);p.forEach(o=>{o.x+=o.vx;o.y+=o.vy;if(o.x<0||o.x>innerWidth)o.vx*=-1;if(o.y<0||o.y>innerHeight)o.vy*=-1;ctx.beginPath();ctx.arc(o.x,o.y,2,0,6.28);ctx.fillStyle='#00aaff';ctx.fill();});requestAnimationFrame(a)}a();
+</script>
+</body>
+</html>
